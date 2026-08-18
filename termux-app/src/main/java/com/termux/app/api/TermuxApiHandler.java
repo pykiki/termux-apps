@@ -146,6 +146,11 @@ public class TermuxApiHandler {
                 case "BatteryStatus":
                     BatteryStatusAPI.onReceive(context, intent);
                     break;
+                case "CameraPhoto":
+                    if (checkAndRequestPermission(context, intent, Manifest.permission.CAMERA)) {
+                        CameraPhotoAPI.onReceive(context, intent);
+                    }
+                    break;
                 case "CameraInfo":
                     CameraInfoAPI.onReceive(context, intent);
                     break;
