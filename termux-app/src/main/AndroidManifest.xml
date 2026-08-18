@@ -28,6 +28,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- BrightnessAPI, granted through a settings screen rather than a prompt -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <!-- SmsSendAPI; READ_PHONE_STATE only chooses a SIM, the default works without it -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- LocationAPI, foreground only -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- Used by DialogAPI -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- See https://developer.android.com/guide/components/foreground-services -->

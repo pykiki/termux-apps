@@ -149,6 +149,20 @@ public class TermuxApiHandler {
                 case "CameraInfo":
                     CameraInfoAPI.onReceive(context, intent);
                     break;
+                case "Brightness":
+                    // Fully qualified: importing Settings here would collide with any other
+                    // patch that needs it, and these are meant to apply independently.
+                    if (!android.provider.Settings.System.canWrite(context)) {
+                        ResultReturner.returnData(intent, out -> out.println(
+                            "{\"API_ERROR\":\"Termux may not change system settings."
+                            + " Grant it in the screen that just opened.\"}"));
+                        context.startActivity(new Intent(
+                            android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    } else {
+                        BrightnessAPI.onReceive(context, intent);
+                    }
+                    break;
                 case "Clipboard":
                     ClipboardApi.onReceive(context, intent);
                     break;
@@ -166,6 +180,12 @@ public class TermuxApiHandler {
                     break;
                 case "MediaScanner":
                     MediaScannerAPI.onReceive(context, intent);
+                    break;
+                case "Location":
+                    if (checkAndRequestPermission(context, intent,
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        LocationAPI.onReceive(context, intent);
+                    }
                     break;
                 case "MediaPlayer":
                     MediaPlayerAPI.onReceive(context, intent);
@@ -194,6 +214,12 @@ public class TermuxApiHandler {
                     break;
                 case "Share":
                     ShareAPI.onReceive(context, intent);
+                    break;
+                case "SmsSend":
+                    // READ_PHONE_STATE only picks a SIM; without it the default is used.
+                    if (checkAndRequestPermission(context, intent, Manifest.permission.SEND_SMS)) {
+                        SmsSendAPI.onReceive(context, intent);
+                    }
                     break;
                 case "SpeechToText":
                     if (checkAndRequestPermission(context, intent, android.Manifest.permission.RECORD_AUDIO)) {
