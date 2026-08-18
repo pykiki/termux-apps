@@ -254,4 +254,8 @@
 
     </application>
 
+    <!-- SmsSendAPI. READ_PHONE_STATE only chooses a SIM; the default works without it -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
 </manifest>

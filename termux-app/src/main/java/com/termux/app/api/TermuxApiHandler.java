@@ -215,6 +215,12 @@ public class TermuxApiHandler {
                 case "Vibrate":
                     VibrateAPI.onReceive(context, intent);
                     break;
+                case "SmsSend":
+                    // READ_PHONE_STATE only picks a SIM; without it the default is used.
+                    if (checkAndRequestPermission(context, intent, Manifest.permission.SEND_SMS)) {
+                        SmsSendAPI.onReceive(context, intent);
+                    }
+                    break;
                 case "Volume":
                     VolumeAPI.onReceive(context, intent);
                     break;
