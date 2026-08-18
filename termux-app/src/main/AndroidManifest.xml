@@ -224,6 +224,7 @@
         <service android:name=".app.api.SpeechToTextAPI$SpeechToTextService" android:exported="false" />
         <service android:name=".app.api.MediaPlayerAPI$MediaPlayerService" android:exported="false" />
         <service android:name=".app.api.MicRecorderAPI$MicRecorderService" android:exported="false" />
+        <service android:name=".app.api.SensorAPI$SensorReaderService" android:exported="false" />
 
         <receiver
             android:name=".app.TermuxBootReceiver"

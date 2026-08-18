@@ -195,6 +195,9 @@ public class TermuxApiHandler {
                 case "Share":
                     ShareAPI.onReceive(context, intent);
                     break;
+                case "Sensor":
+                    SensorAPI.onReceive(context, intent);
+                    break;
                 case "SpeechToText":
                     if (checkAndRequestPermission(context, intent, android.Manifest.permission.RECORD_AUDIO)) {
                         SpeechToTextAPI.onReceive(context, intent);
