@@ -140,6 +140,9 @@ public class TermuxApiHandler {
             // without sharedUserId) that does not require extra permissions
             // ourselves, and call out to Termux:API in the default case.
             switch (apiMethod) {
+                case "ScreenListener":
+                    ScreenListenerAPI.onReceive(context, intent);
+                    break;
                 case "AudioInfo":
                     AudioAPI.onReceive(context, intent);
                     break;
