@@ -152,6 +152,9 @@ public class TermuxApiHandler {
                 case "Clipboard":
                     ClipboardApi.onReceive(context, intent);
                     break;
+                case "BatteryListener":
+                    BatteryListenerAPI.onReceive(context, intent);
+                    break;
                 case "Dialog":
                     DialogAPI.onReceive(context, intent);
                     break;
