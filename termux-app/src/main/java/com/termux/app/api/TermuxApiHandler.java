@@ -170,6 +170,9 @@ public class TermuxApiHandler {
                 case "MediaPlayer":
                     MediaPlayerAPI.onReceive(context, intent);
                     break;
+                case "NetworkListener":
+                    NetworkListenerAPI.onReceive(context, intent);
+                    break;
                 case "MicRecorder":
                     if (checkAndRequestPermission(context, intent, android.Manifest.permission.RECORD_AUDIO)) {
                         MicRecorderAPI.onReceive(context, intent);

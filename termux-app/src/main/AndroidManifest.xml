@@ -34,6 +34,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:ignore="ForegroundServicesPolicy" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- registerDefaultNetworkCallback, for the network listener -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- The SSID on the network event. neverForLocation: Android 13 added this so
+         wifi use cases stop having to ask for the user's position. ACCESS_WIFI_STATE
+         is what un-redacts the SSID and BSSID; without it the framework returns
+         "<unknown ssid>" and 02:00:00:00:00:00 while the rest of the link arrives. -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="com.termux.permission.TERMUX_INTERNAL"/>
 
