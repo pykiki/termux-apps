@@ -25,20 +25,36 @@
     <permission android:name="com.termux.sharedfile.READ_WRITE" android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- See https://developer.android.com/privacy-and-security/local-network-permission -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Used by DialogAPI -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- CameraPhotoAPI; CameraInfo reads characteristics without it -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <!-- See https://developer.android.com/guide/components/foreground-services -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:ignore="ForegroundServicesPolicy" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- registerDefaultNetworkCallback, for the network listener -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- The SSID on the network event. neverForLocation: Android 13 added this so
+         wifi use cases stop having to ask for the user's position. ACCESS_WIFI_STATE
+         is what un-redacts the SSID and BSSID; without it the framework returns
+         "<unknown ssid>" and 02:00:00:00:00:00 while the rest of the link arrives. -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="com.termux.permission.TERMUX_INTERNAL"/>
 
     <!-- See https://developer.android.com/training/data-storage/manage-all-files -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="AllFilesAccessPolicy,ScopedStorage" />
+
+    <!-- BrightnessAPI, granted through a settings screen rather than a prompt -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
 
     <queries>
         <!-- See https://developer.android.com/training/package-visibility
@@ -47,6 +63,10 @@
         <!-- https://developer.android.com/about/versions/11/behavior-changes-11#speech-recognition -->
         <intent><action android:name="android.speech.RecognitionService"/></intent>
     </queries>
+
+    <!-- LocationAPI; foreground only, never background -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:dataExtractionRules="@xml/backup"
@@ -224,6 +244,7 @@
         <service android:name=".app.api.SpeechToTextAPI$SpeechToTextService" android:exported="false" />
         <service android:name=".app.api.MediaPlayerAPI$MediaPlayerService" android:exported="false" />
         <service android:name=".app.api.MicRecorderAPI$MicRecorderService" android:exported="false" />
+        <service android:name=".app.api.SensorAPI$SensorReaderService" android:exported="false" />
 
         <receiver
             android:name=".app.TermuxBootReceiver"
@@ -232,6 +253,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".app.api.NotificationListAPI$NotificationService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
 
         <!-- This (or rather, value 2.1 or higher) is needed to make the Samsung Galaxy S8 mark the
         app with "This app is optimized to run in full screen." -->
@@ -253,5 +284,9 @@
             android:value="true" />
 
     </application>
+
+    <!-- SmsSendAPI. READ_PHONE_STATE only chooses a SIM; the default works without it -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
 </manifest>

@@ -13,6 +13,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.system.Os;
 import android.text.TextUtils;
 import android.util.JsonWriter;
@@ -130,6 +131,17 @@ public class TermuxApiHandler {
     };
 
 
+    /**
+     * Notification access is a settings-screen grant, not a runtime permission, so it cannot be
+     * requested from here - only checked, and the screen opened for the user.
+     */
+    private static boolean notificationAccessGranted(Context context) {
+        var component = new ComponentName(context, NotificationListAPI.NotificationService.class);
+        String enabled = Settings.Secure.getString(context.getContentResolver(),
+            "enabled_notification_listeners");
+        return enabled != null && enabled.contains(component.flattenToString());
+    }
+
     public TermuxApiHandler(TermuxService service) {
         mTermuxService = service;
     }
@@ -140,11 +152,19 @@ public class TermuxApiHandler {
             // without sharedUserId) that does not require extra permissions
             // ourselves, and call out to Termux:API in the default case.
             switch (apiMethod) {
+                case "ScreenListener":
+                    ScreenListenerAPI.onReceive(context, intent);
+                    break;
                 case "AudioInfo":
                     AudioAPI.onReceive(context, intent);
                     break;
                 case "BatteryStatus":
                     BatteryStatusAPI.onReceive(context, intent);
+                    break;
+                case "CameraPhoto":
+                    if (checkAndRequestPermission(context, intent, Manifest.permission.CAMERA)) {
+                        CameraPhotoAPI.onReceive(context, intent);
+                    }
                     break;
                 case "CameraInfo":
                     CameraInfoAPI.onReceive(context, intent);
@@ -152,11 +172,28 @@ public class TermuxApiHandler {
                 case "Clipboard":
                     ClipboardApi.onReceive(context, intent);
                     break;
+                case "BatteryListener":
+                    BatteryListenerAPI.onReceive(context, intent);
+                    break;
                 case "Dialog":
                     DialogAPI.onReceive(context, intent);
                     break;
                 case "Download":
                     DownloadAPI.onReceive(context, intent);
+                    break;
+                case "Brightness":
+                    // Fully qualified: importing Settings would collide with any other patch
+                    // needing it, and these are meant to apply independently.
+                    if (android.provider.Settings.System.canWrite(context)) {
+                        BrightnessAPI.onReceive(context, intent);
+                    } else {
+                        ResultReturner.returnData(intent, out -> out.println(
+                            "{\"API_ERROR\":\"Termux may not change system settings."
+                            + " Grant it in the screen that just opened.\"}"));
+                        context.startActivity(new Intent(
+                            android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
                     break;
                 case "JobScheduler":
                     JobSchedulerAPI.onReceive(context, intent);
@@ -167,8 +204,17 @@ public class TermuxApiHandler {
                 case "MediaScanner":
                     MediaScannerAPI.onReceive(context, intent);
                     break;
+                case "Location":
+                    if (checkAndRequestPermission(context, intent,
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        LocationAPI.onReceive(context, intent);
+                    }
+                    break;
                 case "MediaPlayer":
                     MediaPlayerAPI.onReceive(context, intent);
+                    break;
+                case "NetworkListener":
+                    NetworkListenerAPI.onReceive(context, intent);
                     break;
                 case "MicRecorder":
                     if (checkAndRequestPermission(context, intent, android.Manifest.permission.RECORD_AUDIO)) {
@@ -180,6 +226,20 @@ public class TermuxApiHandler {
                     break;
                 case "NotificationChannel":
                     NotificationAPI.onReceiveChannel(context, intent);
+                    break;
+                case "NotificationList":
+                    if (notificationAccessGranted(context)) {
+                        NotificationListAPI.onReceive(context, intent);
+                    } else {
+                        // Upstream opens the settings screen and returns nothing, leaving the
+                        // caller's socket open with no reason given. Answer it as well.
+                        ResultReturner.returnData(intent, out -> out.println(
+                            "{\"API_ERROR\":\"Notification access is not granted to Termux."
+                            + " Enable it in the screen that just opened.\"}"));
+                        context.startActivity(
+                            new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
                     break;
                 case "NotificationRemove":
                     NotificationAPI.onReceiveRemoveNotification(context, intent);
@@ -195,10 +255,16 @@ public class TermuxApiHandler {
                 case "Share":
                     ShareAPI.onReceive(context, intent);
                     break;
+                case "Sensor":
+                    SensorAPI.onReceive(context, intent);
+                    break;
                 case "SpeechToText":
                     if (checkAndRequestPermission(context, intent, android.Manifest.permission.RECORD_AUDIO)) {
                         SpeechToTextAPI.onReceive(context, intent);
                     }
+                    break;
+                case "StorageListener":
+                    StorageListenerAPI.onReceive(context, intent);
                     break;
                 case "StorageGet":
                     StorageGetAPI.onReceive(context, intent);
@@ -214,6 +280,12 @@ public class TermuxApiHandler {
                     break;
                 case "Vibrate":
                     VibrateAPI.onReceive(context, intent);
+                    break;
+                case "SmsSend":
+                    // READ_PHONE_STATE only picks a SIM; without it the default is used.
+                    if (checkAndRequestPermission(context, intent, Manifest.permission.SEND_SMS)) {
+                        SmsSendAPI.onReceive(context, intent);
+                    }
                     break;
                 case "Volume":
                     VolumeAPI.onReceive(context, intent);
