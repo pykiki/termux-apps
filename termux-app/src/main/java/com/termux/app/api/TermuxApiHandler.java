@@ -189,6 +189,9 @@ public class TermuxApiHandler {
                         NotificationAPI.onReceiveReplyToNotification(context, intent);
                     }
                     break;
+                case "Overlay":
+                    OverlayAPI.onReceive(context, intent);
+                    break;
                 case "SAF":
                     SAFAPI.onReceive(context, intent);
                     break;
