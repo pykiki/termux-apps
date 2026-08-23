@@ -161,6 +161,9 @@ public class TermuxApiHandler {
                 case "JobScheduler":
                     JobSchedulerAPI.onReceive(context, intent);
                     break;
+                case "ActivityStart":
+                    ActivityStartAPI.onReceive(context, intent);
+                    break;
                 case "Keystore":
                     KeystoreAPI.onReceive(intent);
                     break;
