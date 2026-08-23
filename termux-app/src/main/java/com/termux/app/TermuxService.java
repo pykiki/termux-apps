@@ -450,6 +450,7 @@ public final class TermuxService extends Service {
             .setSmallIcon(R.drawable.ic_service_notification)
             .setColor(0xFF607D8B)
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .addAction(new Notification.Action.Builder(Icon.createWithResource("", android.R.drawable.ic_delete), res.getString(R.string.notification_action_exit), PendingIntent.getService(this, 0, exitIntent, PendingIntent.FLAG_IMMUTABLE)).build())
             .addAction(new Notification.Action.Builder(Icon.createWithResource("", wakeLockIcon), actionTitle, PendingIntent.getService(this, 0, toggleWakeLockIntent, PendingIntent.FLAG_IMMUTABLE)).build())
             .build();
