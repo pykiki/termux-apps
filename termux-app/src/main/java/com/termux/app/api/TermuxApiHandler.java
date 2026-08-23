@@ -203,6 +203,9 @@ public class TermuxApiHandler {
                 case "StorageGet":
                     StorageGetAPI.onReceive(context, intent);
                     break;
+                case "AudioDeviceListener":
+                    AudioDeviceListenerAPI.onReceive(context, intent);
+                    break;
                 case "TextToSpeech":
                     TextToSpeechAPI.onReceive(context, intent);
                     break;
