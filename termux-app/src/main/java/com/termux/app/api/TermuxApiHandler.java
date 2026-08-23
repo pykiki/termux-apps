@@ -209,6 +209,9 @@ public class TermuxApiHandler {
                 case "Toast":
                     ToastAPI.onReceive(context, intent);
                     break;
+                case "Print":
+                    PrintAPI.onReceive(context, intent);
+                    break;
                 case "Usb":
                     UsbAPI.onReceive(context, intent);
                     break;

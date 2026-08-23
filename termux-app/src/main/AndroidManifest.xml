@@ -172,6 +172,11 @@
             android:excludeFromRecents="true"
             android:exported="false" />
 
+        <activity android:name=".app.api.PrintAPI$PrintActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+
         <provider
             android:name=".app.TermuxDocumentsProvider"
             android:authorities="com.termux.documents"
