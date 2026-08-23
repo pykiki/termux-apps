@@ -20,6 +20,10 @@
         android:icon="@mipmap/ic_launcher"
         android:protectionLevel="signature" />
 
+    <!-- ActivityStartAPI with Termux off screen: Android only offers the "Appear
+         on top" toggle to an app that declares this. Off until the user grants. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:ignore="ProtectedPermissions" />
+
     <!-- This permission is not used, but a permission is needed on the sharedfile contentprovider,
          which will always use FLAG_GRANT_READ_URI_PERMISSION. -->
     <permission android:name="com.termux.sharedfile.READ_WRITE" android:protectionLevel="signature" />
